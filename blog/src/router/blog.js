@@ -1,6 +1,13 @@
 const {getList,getDetails,addBlog,updateBlog,deleteBlog} = require('../controller/blog')
 const {successModel, errorModel} = require('../model/resModel')
 
+//验证是否登录
+const checkLoginBlog = (req) => {
+    if(!req.session.username){
+        return Promise.resolve(new errorModel('登录失败'))
+    }
+}
+
 const blogRouter = (req,res) => {
     const method = req.method;
     const id = req.query.id 
@@ -9,10 +16,6 @@ const blogRouter = (req,res) => {
     if(method === 'GET' && req.path === '/api/blog/list'){
         const author = req.query.author || ''
         const keyword = req.query.keyword || ''
-
-        // const listData = getList(author,keyword)
-        // console.log(new successModel(listData,'ok'))
-        // return new successModel(listData,'ok')
         const mySqlData = getList(author,keyword)
         return mySqlData.then(listData => {
             return new successModel(listData)
@@ -29,7 +32,11 @@ const blogRouter = (req,res) => {
 
      //新建博客
      if(method === 'POST' && req.path === '/api/blog/add'){
-        req.body.author = 'zk'
+        let checkLogin = checkLoginBlog(req)
+        if(checkLogin){
+            return checkLoginBlog
+        }
+        req.body.author = req.session.username
         const result = addBlog(req.body)
         return result.then(data => {
             return new successModel(data)
@@ -38,6 +45,10 @@ const blogRouter = (req,res) => {
     }
     //更新博客
     if(method === 'POST' && req.path === '/api/blog/update'){
+        let checkLogin = checkLoginBlog(req)
+        if(checkLogin){
+            return checkLoginBlog
+        }
         const result = updateBlog(id,req.body)
         return result.then(data => {
             if(data){
@@ -50,7 +61,11 @@ const blogRouter = (req,res) => {
 
      //删除博客
      if(method === 'POST' && req.path === '/api/blog/delete'){
-         let author = 'zk'
+        let checkLogin = checkLoginBlog(req)
+        if(checkLogin){
+            return checkLoginBlog
+        }
+         let author = req.session.username
         const result = deleteBlog(id,author)
         return result.then(data => {
             if(data){
