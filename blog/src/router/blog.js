@@ -34,7 +34,7 @@ const blogRouter = (req,res) => {
      if(method === 'POST' && req.path === '/api/blog/add'){
         let checkLogin = checkLoginBlog(req)
         if(checkLogin){
-            return checkLoginBlog
+            return checkLogin
         }
         req.body.author = req.session.username
         const result = addBlog(req.body)
@@ -47,7 +47,7 @@ const blogRouter = (req,res) => {
     if(method === 'POST' && req.path === '/api/blog/update'){
         let checkLogin = checkLoginBlog(req)
         if(checkLogin){
-            return checkLoginBlog
+            return checkLogin
         }
         const result = updateBlog(id,req.body)
         return result.then(data => {
@@ -63,7 +63,7 @@ const blogRouter = (req,res) => {
      if(method === 'POST' && req.path === '/api/blog/delete'){
         let checkLogin = checkLoginBlog(req)
         if(checkLogin){
-            return checkLoginBlog
+            return checkLogin
         }
          let author = req.session.username
         const result = deleteBlog(id,author)
