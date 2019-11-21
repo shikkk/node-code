@@ -1,7 +1,9 @@
 const querystring = require('querystring')
+const { set, get } = require('./src/db/redis')
+const { access } = require('./src/utils/log')
 const blogRouter = require('./src/router/blog')
 const userRouter = require('./src/router/user')
-const { set, get } = require('./src/db/redis')
+
 
 //设置cookie过期时间
 const getCookieExpires = () => {
@@ -37,6 +39,8 @@ const getPostData = (req) => {
 }
 
 const serverHandle = (req,res) => {
+    //写入日志
+    access(`${req.method}-- ${req.url} -- ${req.headers['user-agent']} -- ${Date.now()} ` )
     res.setHeader('Content-type','application/json')
     //处理blog路由
     const url = req.url;
